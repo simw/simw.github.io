@@ -1,0 +1,64 @@
+---
+title: First steps in R - Euler 1
+layout: post
+---
+
+Aim:
+Take the number from 1 to 999, filter out for multiples of 3 and 5 and then sum
+
+The first step is to generate the list. For later generalisation, ideally we wouldn't put
+the whole list into memory right now. eg if we were looking at numbers into the billions,
+we'd have a hard time fitting them all in - and as the algorithm can be made to be
+local (ie operate on one number at a time), we'd do that.
+
+But for now, let's just go with the list. We generate that by:
+
+    numbers <- 1:999
+
+(Note: the problem says 'below 1000'. R generates the list inclusive of the listed end points
+ - unlike, say, python)
+
+(Note2: while I feel like I want to use '=', as per the discussion on 
+http://stackoverflow.com/questions/1741820/assignment-operators-in-r-and, most
+R code I see uses <-, so I'll stick with that here)
+
+Next, we want to filter this list. The modulus operator is '%%', so the expression
+
+    numbers %% 3
+
+returns a list of the remainders. We can convert this to a boolean filter list by
+
+    !(numbers %% 3)
+
+(the brackets aren't required, just adding them for readability). This returns a list
+
+    FALSE FALSE TRUE FALSE FALSE TRUE ...
+
+Similarly, the multiples of 5 can be done by
+
+    !(numbers %% 5)
+
+We could do the multiples of 3 and 5 separately, then subtract the multiples of 15. But it's
+probably easier to merge the two lists. To do this, we use the logical OR operator, |. The double version,
+|| operates on the whole list, but the single version | operates element-wise on the list.
+
+So, our filter is now
+
+    !(numbers %% 3) | !(numbers %% 5)
+
+returning
+
+    FALSE FALSE TRUE FALSE TRUE TRUE ...
+
+R supports indexed filtering - ie pass in a boolean list to the usual [...] operator, and it'll return just
+those elements which are TRUE in the boolean list. So
+
+    numbers[!(numbers %% 3) | !(numbers %% 5)]
+
+gives us
+
+    3 5 6 9 ...
+
+And to sum over all the elements, we use the sum function, giving our final answer
+
+    sum(numbers[!(numbers %% 3) | !(numbers %% 5)])
